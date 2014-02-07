@@ -1,7 +1,8 @@
 Scalr Next Generation Installer - Tests
 =======================================
 
-A set of test scripts to use with Scalr to test the next generation installer.
+A set of test scripts to use with an existing Scalr install to test the next
+generation installer.
 
 Usage
 =====
