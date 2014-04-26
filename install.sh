@@ -43,7 +43,7 @@ echo "$NOTIFY_SUBSCRIBE" >> $ANSWERS_FILE
 echo "$NOTIFY_EMAIL" >> $ANSWERS_FILE
 
 echo "Deploying Scalr from installer branch: $INSTALLER_BRANCH"
-curl -O https://raw.github.com/Scalr/installer-ng/$INSTALLER_BRANCH/scripts/install.py
+curl -L -O https://raw.github.com/Scalr/installer-ng/$INSTALLER_BRANCH/scripts/install.py
 
 nohup bash -c "python install.py $INSTALLER_OPTS < $ANSWERS_FILE" > $INSTALLER_LOG_FILE &
 installer_pid=$!
