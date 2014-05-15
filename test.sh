@@ -3,9 +3,13 @@ set -o nounset
 
 : ${INSTALLER_LOG_FILE:="/root/install.log"}
 : ${WAITER_LOG_FILE:="/root/waiter.log"}
-: ${INSTALL_FAILED_EVENT:="ScalrInstallFailed"}
 
 : ${TEST_REPORT_LINES:="400"}
+
+: ${SCALR_START_TESTS:=""}
+
+: ${INSTALL_FAILED_EVENT:="ScalrInstallFailed"}
+: ${START_TESTS_EVENT:="ScalrStartTest"}
 
 # Find szradm
 
@@ -39,5 +43,9 @@ report_error () {
 grep -PB$TEST_REPORT_LINES 'ERROR|FATAL' $INSTALLER_LOG_FILE && report_error  # There should be no error in the install log
 
 grep 'Done' $WAITER_LOG_FILE || report_error  # The install should be done
+
+if [ -n $SCALR_START_TESTS ]; then
+  $szradm --fire-event=$START_TESTS_EVENT
+fi
 
 exit 0
