@@ -7,6 +7,11 @@ set -o nounset
 
 : ${TEST_REPORT_LINES:="400"}
 
+# Find szradm
+
+szradm=$(PATH=/usr/local/bin:/usr/bin which szradm)
+
+
 # Install pgrep
 
 install_pgrep () {
@@ -27,7 +32,7 @@ pgrep -lf "python install.py" && echo "Install in progress" && exit 0
 
 # Did we get any errors?
 report_error () {
-  /usr/local/bin/szradm --fire-event=$INSTALL_FAILED_EVENT
+  $szradm --fire-event=$INSTALL_FAILED_EVENT
   exit 1
 }
 
