@@ -2,6 +2,8 @@
 set -o nounset
 set -o errexit
 
+: ${WORK_DIR:="/tmp/scalr-install-$$"}
+
 : ${INSTALLER_BRANCH:="master"}
 
 : ${SCALR_DEPLOY_ADVANCED:=""}
@@ -15,9 +17,14 @@ set -o errexit
 : ${NOTIFY_EMAIL:="thomas@scalr.com"}
 
 : ${ANSWERS_FILE:="/root/answers"}
+
 : ${INSTALLER_LOG_FILE:="/root/install.log"}
 : ${WAITER_LOG_FILE:="/root/waiter.log"}
 : ${INSTALL_DONE_EVENT:="ScalrInstallDone"}
+
+mkdir -p $WORK_DIR
+cd $WORK_DIR
+echo "Installing in: '$(pwd)'"
 
 echo -n > $ANSWERS_FILE
 
