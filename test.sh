@@ -2,6 +2,10 @@
 set -o nounset
 
 : ${INSTALLER_LOG_FILE:="/root/install.log"}
+: ${WAITER_LOG_FILE:="/root/waiter.log"}
+: ${INSTALL_FAILED_EVENT:="ScalrInstallFailed"}
+
+: ${TEST_REPORT_LINES:="400"}
 
 # Install pgrep
 
@@ -22,6 +26,13 @@ command -v pgrep 2>&1 > /dev/null || install_pgrep
 pgrep -lf "python install.py" && echo "Install in progress" && exit 0
 
 # Did we get any errors?
-grep -PB50 'ERROR|FATAL' $INSTALLER_LOG_FILE && exit 1
+report_error () {
+  /usr/local/bin/szradm --fire-event=$INSTALL_FAILED_EVENT
+  exit 1
+}
+
+grep -PB$TEST_REPORT_LINES 'ERROR|FATAL' $INSTALLER_LOG_FILE && report_error  # There should be no error in the install log
+
+grep 'Done' $WAITER_LOG_FILE || report_error  # The install should be done
 
 exit 0
