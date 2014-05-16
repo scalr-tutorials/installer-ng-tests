@@ -54,7 +54,7 @@ grep -PB$TEST_REPORT_LINES 'ERROR|FATAL' $INSTALLER_LOG_FILE && report_error  # 
 
 
 echo "Testing for proper install termination"
-grep 'Congratulations' $INSTALLER_LOG_FILE || report_error  # The install should be done
+grep --silent 'Congratulations' $INSTALLER_LOG_FILE || report_error  # The install should be done
 
 
 echo "Testing for timezone consistency"
