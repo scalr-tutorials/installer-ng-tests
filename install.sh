@@ -73,11 +73,13 @@ nohup bash -c "while kill -0 $installer_pid > /dev/null 2>&1; do date && ps aux 
 # Wait for the install to exit before we do
 # If we exited before Chef is done, the Scalarizr update agent may attempt an upgrade while we install
 
-while kill -0 $installer_pid; do
-  echo "$(date): Install in progress" > $WAITER_LOG_FILE
+echo > $WAITER_LOG_FILE  # Clean waiter file first
+
+while kill -0 $installer_pid > /dev/null 2>&1; do
+  echo "$(date): Install in progress" >> $WAITER_LOG_FILE
   sleep 10
 done
 
-echo "$(date): Install complete" > $WAITER_LOG_FILE
+echo "$(date): Install complete" >> $WAITER_LOG_FILE
 
 $szradm --fire-event=$INSTALL_DONE_EVENT

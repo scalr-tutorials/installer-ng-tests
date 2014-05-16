@@ -40,9 +40,11 @@ report_error () {
   exit 1
 }
 
+echo "Testing for errors"
 grep -PB$TEST_REPORT_LINES 'ERROR|FATAL' $INSTALLER_LOG_FILE && report_error  # There should be no error in the install log
 
-grep 'Done' $WAITER_LOG_FILE || report_error  # The install should be done
+echo "Testing for proper install termination"
+grep 'Congratulations' $INSTALLER_LOG_FILE || report_error  # The install should be done
 
 if [ -n $SCALR_START_TESTS ]; then
   $szradm --fire-event=$START_TESTS_EVENT
