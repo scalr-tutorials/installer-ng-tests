@@ -53,6 +53,9 @@ echo "auto" >> $ANSWERS_FILE
 echo "$NOTIFY_SUBSCRIBE" >> $ANSWERS_FILE
 echo "$NOTIFY_EMAIL" >> $ANSWERS_FILE
 
+
+# Retrieve installer and launch it
+
 echo "Deploying Scalr from installer branch: $INSTALLER_BRANCH"
 curl --location --remote-name --fail --sslv3 https://raw.github.com/Scalr/installer-ng/$INSTALLER_BRANCH/scripts/install.py
 
@@ -60,10 +63,21 @@ nohup bash -c "python install.py $INSTALLER_OPTS < $ANSWERS_FILE" > $INSTALLER_L
 installer_pid=$!
 echo "Started installer with PID: $installer_pid"
 
-nohup bash -c "while kill -0 $installer_pid > /dev/null 2>&1; do echo \"\$(date): Install in progress\" && sleep 10; done && echo \"\$(date): Install complete\" && $szradm --fire-event=$INSTALL_DONE_EVENT" > $WAITER_LOG_FILE &
-waiter_pid=$!
-echo "Started waiter with PID: $waiter_pid"
 
+# Start a side-process to log running processes to a file
 
 : ${PROC_LOG_FILE:="/root/proc.log"}
 nohup bash -c "while kill -0 $installer_pid > /dev/null 2>&1; do date && ps aux --forest && echo && echo && echo && sleep 2; done" > $PROC_LOG_FILE &
+
+
+# Wait for the install to exit before we do
+# If we exited before Chef is done, the Scalarizr update agent may attempt an upgrade while we install
+
+while kill -0 $installer_pid; do
+  echo "$(date): Install in progress" > $WAITER_LOG_FILE
+  sleep 10
+done
+
+echo "$(date): Install complete" > $WAITER_LOG_FILE
+
+$szradm --fire-event=$INSTALL_DONE_EVENT
