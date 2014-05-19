@@ -59,7 +59,7 @@ grep --silent 'Congratulations' $INSTALLER_LOG_FILE || report_error  # The insta
 
 echo "Testing for timezone consistency"
 # Note: this may fail if we test at the second where we change hours... Probably not common enough to care: it's just a test script
-mysql_hour=$(mysql --user=root --password=$(jq --raw-output ".mysql.server_root_password" "/root/solo.json") --skip-column-names --batch --execute="SELECT HOUR(NOW())")
+mysql_hour=$(mysql --user=root --password=$(jq --raw-output ".mysql.server_root_password" "/root/solo.json") --skip-column-names --batch --execute="SELECT DATE_FORMAT(NOW(), '%H')")
 php_hour=$(php -r 'echo date("H") . "\n";')
 
 if [ "$mysql_hour" != "$php_hour" ]; then
