@@ -13,6 +13,8 @@ set -o errexit
 : ${SCALR_DEPLOY_RELEASE:=""}
 : ${SCALR_DEPLOY_SSH_KEY:=""}
 
+: ${SCALR_COOKBOOK_RELEASE:=""}
+
 : ${NOTIFY_SUBSCRIBE:="n"}
 : ${NOTIFY_EMAIL:="thomas@scalr.com"}
 
@@ -40,6 +42,11 @@ if [ -n "$SCALR_DEPLOY_ADVANCED" ] ; then
   INSTALLER_OPTS="--advanced"
 else
   INSTALLER_OPTS=""
+fi
+
+if [ -n "${SCALR_COOKBOOK_RELEASE}" ]; then
+  echo "Using Coobkook release: '${SCALR_DEPLOY_RELEASE}'"
+  INSTALLER_OPTS="${INSTALLER_OPTS} --release=\"${SCALR_COOKBOOK_RELEASE}\""
 fi
 
 
