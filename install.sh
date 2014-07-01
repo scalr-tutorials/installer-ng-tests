@@ -45,7 +45,7 @@ else
 fi
 
 if [ -n "${SCALR_COOKBOOK_RELEASE}" ]; then
-  echo "Using Coobkook release: '${SCALR_DEPLOY_RELEASE}'"
+  echo "Using Coobkook release: '${SCALR_COOKBOOK_RELEASE}'"
   INSTALLER_OPTS="${INSTALLER_OPTS} --release=\"${SCALR_COOKBOOK_RELEASE}\""
 fi
 
