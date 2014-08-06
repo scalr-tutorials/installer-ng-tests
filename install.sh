@@ -62,6 +62,10 @@ echo "$NOTIFY_SUBSCRIBE" >> $ANSWERS_FILE
 echo "$NOTIFY_EMAIL" >> $ANSWERS_FILE
 
 
+# Stop Scalarizr update agent if present. Older agents may trigger a conflict on the
+# package manager
+service scalr-upd-client stop || true
+
 # Retrieve installer and launch it
 
 echo "Deploying Scalr from installer branch: $INSTALLER_BRANCH"
@@ -79,7 +83,6 @@ nohup bash -c "while kill -0 $installer_pid > /dev/null 2>&1; do date && ps aux 
 
 
 # Wait for the install to exit before we do
-# If we exited before Chef is done, the Scalarizr update agent may attempt an upgrade while we install
 
 echo > $WAITER_LOG_FILE  # Clean waiter file first
 
@@ -91,3 +94,6 @@ done
 echo "$(date): Install complete" >> $WAITER_LOG_FILE
 
 $szradm --fire-event=$INSTALL_DONE_EVENT
+
+# Restart the update agent, if it is there
+service scalr-upd-client start || true
