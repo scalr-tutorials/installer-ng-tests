@@ -66,6 +66,9 @@ if [ "$mysql_hour" != "$php_hour" ]; then
   report_error
 fi
 
+echo "Testing that mysqlnd is not used"
+php -m | grep "mysqlnd" && report_error
+
 if [ -n $SCALR_START_TESTS ]; then
   $szradm --fire-event=$START_TESTS_EVENT
 fi
