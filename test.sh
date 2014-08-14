@@ -69,6 +69,9 @@ fi
 echo "Testing that mysqlnd is not used"
 php -m | grep "mysqlnd" && report_error
 
+echo "Testing that Apache is running"
+curl --location --fail http://127.0.0.1/ || report_error
+
 if [ -n $SCALR_START_TESTS ]; then
   $szradm --fire-event=$START_TESTS_EVENT
 fi
