@@ -76,7 +76,7 @@ if [ -n $SCALR_START_TESTS ]; then
   $szradm --fire-event=$START_TESTS_EVENT
 fi
 
-
-# TODO - Add tests for daemons
+echo "Testing poller process"
+service poller status || report_error
 
 exit 0
