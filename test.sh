@@ -79,4 +79,7 @@ fi
 echo "Testing poller process"
 service poller status || report_error
 
+echo "Testing Cookie handling"
+curl --cookie "PHPSESSID=123" --header "X-Scalr-Token:key" --header "X-Scalr-Interface:v2" --fail "http://localhost:/xGetContext" || report_error
+
 exit 0
