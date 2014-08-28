@@ -37,7 +37,8 @@ if __name__ == "__main__":
 
     # Create a new user
     test_user_password = make_test_user_password(TEST_USER_PASSWORD_ENTROPY_BYTES)
-    test_user_id = adm_session.create_account(TEST_USER_NAME, TEST_USER_EMAIL, test_user_password)
+    res = adm_session.create_account(TEST_USER_NAME, TEST_USER_EMAIL, test_user_password)
+    test_user_id = res.json()["accountId"]
 
     # Login as the user
     user_session = session.ScalrSession(base_url=base_url)
