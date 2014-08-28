@@ -79,11 +79,6 @@ fi
 echo "Testing poller process"
 service poller status || report_error
 
-echo "Testing Cookie handling"
-#curl --cookie "PHPSESSID=123" --header "X-Scalr-Token:key" --header "X-Scalr-Interface:v2" --fail "http://localhost:/xGetContext" || report_error
-# TODO - This raises a 403 even when the install works.
-
-
 # Now, run user tests!
 # Install the Scalr user client library first. Piggyback on the test installer's SCALR_DEPLOY_SSH_KEY
 # TODO - Bypass if that key isn't defined
