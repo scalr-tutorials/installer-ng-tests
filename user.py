@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import json
+import datetime
 import base64
 
 from scalr_client import session
@@ -36,11 +37,12 @@ if __name__ == "__main__":
 
     # Create a new user
     test_user_password = make_test_user_password(TEST_USER_PASSWORD_ENTROPY_BYTES)
-    adm_session.create_account(TEST_USER_NAME, TEST_USER_EMAIL, test_user_password)
+    test_user_id = adm_session.create_account(TEST_USER_NAME, TEST_USER_EMAIL, test_user_password)
 
     # Login as the user
     user_session = sessioN.ScalrSession(base_url=base_url)
-    user_session.login(TEST_USER_EMAIL, test_user_password)
+    user_session.login(TEST_USER_EMAIL, test_user_password, test_user_id)
+    user_session.load_context()
 
     # Do something
     print user_session.get_ec2_cloud_params()
