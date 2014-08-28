@@ -7,6 +7,8 @@ from scalr_client import session
 
 INSTALLER_CONFIG_PATH = "/root/solo.json"
 
+TEST_PROTOCOl = "http"
+
 TEST_USER_NAME = "Test User"
 TEST_USER_EMAIL = "user@scalr.com"
 TEST_USER_PASSWORD_ENTROPY_BYTES = 24
@@ -21,7 +23,7 @@ if __name__ == "__main__":
     with open(INSTALLER_CONFIG_PATH) as f:
         installer_config = json.load(f)
 
-    base_url = installer_config["scalr"]["endpoint"]["host"]
+    base_url = "{0}://{1}".format(TEST_PROTOCOl, installer_config["scalr"]["endpoint"]["host"])
 
     # Find admin creds
     admin = installer_config["scalr"]["admin"]
