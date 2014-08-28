@@ -46,5 +46,5 @@ if __name__ == "__main__":
     user_session.load_context()
 
     # Do something
-    print user_session.get_ec2_cloud_params()
+    print user_session.get_ec2_cloud_params().json()
 
