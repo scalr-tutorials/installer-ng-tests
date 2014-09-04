@@ -1,15 +1,15 @@
 #!/bin/bash
 set -o nounset
 
-: ${INSTALLER_LOG_FILE:="/root/install.log"}
-: ${WAITER_LOG_FILE:="/root/waiter.log"}
+REL_HERE=$(dirname "${BASH_SOURCE}")
+HERE=$(cd "${REL_HERE}"; pwd)  # Get an absolute path
+source "${HERE}/constants.sh"
+
+export GIT_SSH="${HERE}/git_ssh_wrapper.sh"
+export GIT_SSH_KEY_BODY="${SCALR_DEPLOY_SSH_KEY}"
 
 : ${TEST_REPORT_LINES:="400"}
-
 : ${SCALR_START_TESTS:=""}
-
-: ${INSTALL_FAILED_EVENT:="ScalrInstallFailed"}
-: ${START_TESTS_EVENT:="ScalrStartTest"}
 
 # Find szradm
 
@@ -43,8 +43,8 @@ command -v jq 2>&1 > /dev/null || install_jq
 # Are we done installing?
 pgrep -lf "python install.py" && echo "Install in progress" && exit 0
 
-# Did we get any errors?
 report_error () {
+  "${HERE}/report_github.sh" "failure"
   $szradm --fire-event=$INSTALL_FAILED_EVENT
   exit 1
 }
@@ -80,22 +80,11 @@ echo "Testing poller process"
 service poller status || report_error
 
 # Now, run user tests!
-# Install the Scalr user client library first. Piggyback on the test installer's SCALR_DEPLOY_SSH_KEY
 # TODO - Bypass if that key isn't defined
-
-REL_HERE=$(dirname "${BASH_SOURCE}")
-HERE=$(cd "${REL_HERE}"; pwd)  # Get an absolute path
 
 USER_CLIENT_REPO_NAME="scalr-user-client"
 USER_CLIENT_REPO_URL="git@github.com:Scalr/${USER_CLIENT_REPO_NAME}.git"
 USER_CLIENT_INSTALL_DIR=$(mktemp -d)  # No need for a trap here, we don't have errexit set
-USER_CLIENT_INSTALL_KEY_PATH="${USER_CLIENT_INSTALL_DIR}/key"
-
-echo "${SCALR_DEPLOY_SSH_KEY}" > "${USER_CLIENT_INSTALL_KEY_PATH}"
-chmod 600 "${USER_CLIENT_INSTALL_KEY_PATH}"
-
-export GIT_SSH_KEY_PATH="${USER_CLIENT_INSTALL_KEY_PATH}"  # View git_ssh_wrapper.sh
-export GIT_SSH="${HERE}/git_ssh_wrapper.sh"
 
 cd "${USER_CLIENT_INSTALL_DIR}"
 git clone "${USER_CLIENT_REPO_URL}" && cd "${USER_CLIENT_REPO_NAME}" && python setup.py install  # We should have setuptools at this point. If we don't that's an error!
@@ -106,4 +95,5 @@ rm -r -- "${USER_CLIENT_INSTALL_DIR}"
 echo "Running Python user tests"
 python user.py || report_error
 
+"${HERE}/report_github.sh" "success"
 exit 0

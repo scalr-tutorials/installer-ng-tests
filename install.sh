@@ -2,31 +2,16 @@
 set -o nounset
 set -o errexit
 
+REL_HERE=$(dirname "${BASH_SOURCE}")
+HERE=$(cd "${REL_HERE}"; pwd)  # Get an absolute path
+source "${HERE}/constants.sh"
+
+
+# Notify GitHub that we're getting started here
+"${HERE}/report_github.sh" "pending"
+
+# Setup a working directory for this test
 : ${WORK_DIR:="/tmp/scalr-install-$$"}
-
-: ${INSTALLER_BRANCH:="master"}
-
-: ${SCALR_DEPLOY_ADVANCED:=""}
-
-: ${SCALR_DEPLOY_REVISION:=""}
-: ${SCALR_DEPLOY_REPOSITORY:=""}
-: ${SCALR_DEPLOY_VERSION:=""}
-: ${SCALR_DEPLOY_SSH_KEY:=""}
-
-: ${SCALR_COOKBOOK_RELEASE:=""}
-
-: ${NOTIFY_SUBSCRIBE:="n"}
-: ${NOTIFY_EMAIL:="thomas@scalr.com"}
-
-: ${ANSWERS_FILE:="/root/answers"}
-
-: ${INSTALLER_LOG_FILE:="/root/install.log"}
-: ${WAITER_LOG_FILE:="/root/waiter.log"}
-: ${INSTALL_DONE_EVENT:="ScalrInstallDone"}
-
-# Find szradm
-
-szradm=$(PATH=/usr/local/bin:/usr/bin which szradm)
 
 mkdir -p $WORK_DIR
 cd $WORK_DIR
@@ -93,7 +78,7 @@ done
 
 echo "$(date): Install complete" >> $WAITER_LOG_FILE
 
-$szradm --fire-event=$INSTALL_DONE_EVENT
+szradm --fire-event=$INSTALL_DONE_EVENT
 
 # Restart the update agent, if it is there
 service scalr-upd-client start || true
