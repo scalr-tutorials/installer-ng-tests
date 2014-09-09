@@ -43,7 +43,6 @@ if __name__ == "__main__":
     # Login as the user
     user_session = session.ScalrSession(base_url=base_url)
     user_session.login(TEST_USER_EMAIL, test_user_password, test_user_id)
-    user_session.load_context()
 
     # Do something
     print user_session.get_ec2_cloud_params().json()
