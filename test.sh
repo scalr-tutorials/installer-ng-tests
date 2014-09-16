@@ -35,7 +35,7 @@ command -v pgrep 2>&1 > /dev/null || install_pgrep
 
 install_jq () {
   jq_path=/usr/local/bin/jq
-  curl --location --fail "http://stedolan.github.io/jq/download/linux64/jq" > $jq_path
+  curl --silent --location --fail "http://stedolan.github.io/jq/download/linux64/jq" > $jq_path
   chmod +x $jq_path
 }
 command -v jq 2>&1 > /dev/null || install_jq
@@ -70,7 +70,7 @@ echo "Testing that mysqlnd is not used"
 php -m | grep "mysqlnd" && report_error
 
 echo "Testing that Apache is running"
-curl --head --location --fail http://127.0.0.1/ || report_error
+curl --silent --head --location --fail http://127.0.0.1/ || report_error
 
 if [ -n $SCALR_START_TESTS ]; then
   $szradm --fire-event=$START_TESTS_EVENT
@@ -91,6 +91,11 @@ git clone "${USER_CLIENT_REPO_URL}" && cd "${USER_CLIENT_REPO_NAME}" && python s
 
 cd "${HERE}"  # This is where the Python tests are
 rm -r -- "${USER_CLIENT_INSTALL_DIR}"
+
+python -c 'import scalr_client' || {
+  echo "Failed to install the Scalr user client!"
+  report_error
+}
 
 echo "Running Python user tests"
 python user.py || report_error
