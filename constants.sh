@@ -5,6 +5,8 @@
 
 : ${CI_GITHUB_TOKEN:=""}
 
+: ${SCALR_CONNECTION_POLICY:="auto"}
+
 : ${SCALR_DEPLOY_ADVANCED:=""}
 
 : ${SCALR_DEPLOY_REVISION:=""}
