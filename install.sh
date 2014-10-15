@@ -54,7 +54,7 @@ service scalr-upd-client stop || true
 # Retrieve installer and launch it
 
 echo "Deploying Scalr from installer branch: $INSTALLER_BRANCH"
-curl --location --remote-name --fail --sslv3 https://raw.github.com/Scalr/installer-ng/$INSTALLER_BRANCH/scripts/install.py
+curl -sfSLO "https://raw.githubusercontent.com/Scalr/installer-ng/${INSTALLER_BRANCH}/scripts/install.py"
 
 nohup bash -c "python install.py $INSTALLER_OPTS < $ANSWERS_FILE" > $INSTALLER_LOG_FILE &
 installer_pid=$!
