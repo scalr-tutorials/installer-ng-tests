@@ -36,9 +36,10 @@ fi
 
 echo "${!SCALR_IP_VARIABLE_NAME}" >> $ANSWERS_FILE
 if [[ -n "$SCALR_USE_CUSTOM_HOST" ]]; then
+  echo "y" >> $ANSWERS_FILE
   echo "${!SCALR_HOST_VARIABLE_NAME}" >> $ANSWERS_FILE
 else
-  echo "y" >> $ANSWERS_FILE
+  echo "n" >> $ANSWERS_FILE
 fi
 
 if [[ -z "$SCALR_DEPLOY_ADVANCED" ]] || [[ "$SCALR_DEPLOY_VERSION" != "5.0" ]] ; then
