@@ -28,7 +28,8 @@ report_github_ci_status () {
   local branch_sha=$(echo "${branch_ref}" | cut -c-40)  # A commit hash is 40 chars long
   local payload="{\"state\": \"${status}\", \"context\": \"${SCALR_FARM_ROLE_ALIAS}-${SCALR_FARM_ID}\"}"
 
-  curl --fail \
+  curl > /dev/null \
+    --fail \
     --header "Authorization: token ${CI_GITHUB_TOKEN}" \
     --header "Content-Type: application/json" \
     --data "${payload}" \
