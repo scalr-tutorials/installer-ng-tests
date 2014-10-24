@@ -17,34 +17,51 @@ mkdir -p $WORK_DIR
 cd $WORK_DIR
 echo "Installing in: '$(pwd)'"
 
+# Prepare the answers file
 echo -n > $ANSWERS_FILE
 
-if [ -n "$SCALR_DEPLOY_ADVANCED" ] ; then
-  echo "$SCALR_DEPLOY_REVISION" >> $ANSWERS_FILE
+if [[ -n "$SCALR_DEPLOY_ADVANCED" ]]; then
+
   echo "$SCALR_DEPLOY_REPOSITORY" >> $ANSWERS_FILE
+  echo "$SCALR_DEPLOY_REVISION" >> $ANSWERS_FILE
   echo "$SCALR_DEPLOY_VERSION" >> $ANSWERS_FILE
-  echo "$SCALR_DEPLOY_SSH_KEY" >> $ANSWERS_FILE
-  INSTALLER_OPTS="--advanced"
-else
-  INSTALLER_OPTS=""
-fi
 
-if [ -n "${SCALR_COOKBOOK_RELEASE}" ]; then
-  echo "Using Coobkook release: '${SCALR_COOKBOOK_RELEASE}'"
-  INSTALLER_OPTS="${INSTALLER_OPTS} --release=\"${SCALR_COOKBOOK_RELEASE}\""
-fi
+  if [[ ! "$SCALR_DEPLOY_REPOSITORY" =~ (https?|git)://.* ]]; then
+    # Check whether the repository provided is using a SSH-dependent protocol.
+    # If it is, then provide the SSH key
+    echo "$SCALR_DEPLOY_SSH_KEY" >> $ANSWERS_FILE
+  fi
 
-INSTALLER_OPTS="${INSTALLER_OPTS} --verbose"
+fi
 
 echo "${!SCALR_IP_VARIABLE_NAME}" >> $ANSWERS_FILE
+if [[ -n "$SCALR_USE_CUSTOM_HOST" ]]; then
+  echo "${!SCALR_HOST_VARIABLE_NAME}" >> $ANSWERS_FILE
+else
+  echo "y" >> $ANSWERS_FILE
+fi
 
-if [ -z "$SCALR_DEPLOY_ADVANCED" ] || [ "$SCALR_DEPLOY_VERSION" != "5.0" ] ; then
+if [[ -z "$SCALR_DEPLOY_ADVANCED" ]] || [[ "$SCALR_DEPLOY_VERSION" != "5.0" ]] ; then
   echo "$SCALR_INTERNAL_IP" >> $ANSWERS_FILE
 fi
 
 echo "${SCALR_CONNECTION_POLICY}" >> $ANSWERS_FILE
 echo "$NOTIFY_SUBSCRIBE" >> $ANSWERS_FILE
 echo "$NOTIFY_EMAIL" >> $ANSWERS_FILE
+
+# Prepare the CLI
+if [[ -n "$SCALR_DEPLOY_ADVANCED" ]] ; then
+  INSTALLER_OPTS="--advanced"
+else
+  INSTALLER_OPTS=""
+fi
+
+if [[ -n "${SCALR_COOKBOOK_RELEASE}" ]]; then
+  echo "Using Coobkook release: '${SCALR_COOKBOOK_RELEASE}'"
+  INSTALLER_OPTS="${INSTALLER_OPTS} --release=\"${SCALR_COOKBOOK_RELEASE}\""
+fi
+
+INSTALLER_OPTS="${INSTALLER_OPTS} --verbose"
 
 
 # Stop Scalarizr update agent if present. Older agents may trigger a conflict on the
