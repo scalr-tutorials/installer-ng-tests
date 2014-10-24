@@ -1,4 +1,5 @@
 #!/bin/bash
+set -o errexit
 set -o nounset
 
 REL_HERE=$(dirname "${BASH_SOURCE}")
@@ -87,8 +88,8 @@ USER_CLIENT_REPO_URL="git@github.com:Scalr/${USER_CLIENT_REPO_NAME}.git"
 USER_CLIENT_INSTALL_DIR=$(mktemp -d)  # No need for a trap here, we don't have errexit set
 
 # Bootstrap Python environment (possibly all the way from distutils)
-easy_install --upgrade pip
-pip install --upgrade setuptools
+easy_install --upgrade pip || true
+pip install --upgrade setuptools || true
 
 cd "${USER_CLIENT_INSTALL_DIR}"
 git clone "${USER_CLIENT_REPO_URL}" && cd "${USER_CLIENT_REPO_NAME}" && python setup.py install  # We should have setuptools at this point. If we don't that's an error!
