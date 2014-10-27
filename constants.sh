@@ -5,6 +5,8 @@
 
 : ${CI_GITHUB_TOKEN:=""}
 
+: ${SCALR_SYNC_ID:="scalrqa"}
+
 : ${SCALR_CONNECTION_POLICY:="auto"}
 
 : ${SCALR_DEPLOY_ADVANCED:=""}    # Whether to enable the --advanced flag
