@@ -1,3 +1,9 @@
+# Ensure that /usr/local/bin is on our path
+
+export PATH=/usr/local/bin:$PATH
+
+# Configurable constants
+
 : ${INSTALLER_LOG_FILE:="/root/install.log"}
 : ${WAITER_LOG_FILE:="/root/waiter.log"}
 

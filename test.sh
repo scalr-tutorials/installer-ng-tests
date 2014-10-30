@@ -16,9 +16,6 @@ export GIT_SSH_KEY_BODY="${SCALR_DEPLOY_SSH_KEY}"
 
 szradm=$(PATH=/usr/local/bin:/usr/bin which szradm)
 
-# Ensure that /usr/local/bin is on our path
-PATH=/usr/local/bin:$PATH
-
 # Install pgrep
 
 install_pgrep () {
