@@ -37,7 +37,7 @@ fi
 echo "${!SCALR_IP_VARIABLE_NAME}" >> $ANSWERS_FILE
 if [[ -n "$SCALR_USE_CUSTOM_HOST" ]]; then
   echo "n" >> $ANSWERS_FILE
-  echo "${!SCALR_HOST_VARIABLE_NAME}" >> $ANSWERS_FILE
+  eval "${SCALR_CUSTOM_HOST_SCRIPT}" >> $ANSWERS_FILE
 else
   echo "y" >> $ANSWERS_FILE
 fi

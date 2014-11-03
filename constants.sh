@@ -25,9 +25,9 @@ export PATH=/usr/local/bin:$PATH
 : ${SCALR_DEPLOY_SSH_KEY:=""}     # A SSH key to use for git deployment. Only used if the repo is non-default and not a http / git repo
 
 
-: ${SCALR_IP_VARIABLE_NAME:="SCALR_EXTERNAL_IP"}        # The variable to look up for the host IP
-: ${SCALR_USE_CUSTOM_HOST:=""}                          # Whether to use a custom host
-: ${SCALR_HOST_VARIABLE_NAME:="SCALR_SERVER_HOSTNAME"}  # When ussing a custom host, the variable to look it up in
+: ${SCALR_IP_VARIABLE_NAME:="SCALR_EXTERNAL_IP"}  # The variable to look up for the host IP
+: ${SCALR_USE_CUSTOM_HOST:=""}                    # Whether to use a custom host
+: ${SCALR_CUSTOM_HOST_SCRIPT:="hostname"}         # When using a custom host, the variable to look it up in
 
 : ${NOTIFY_SUBSCRIBE:="n"}
 : ${NOTIFY_EMAIL:="thomas@scalr.com"}
