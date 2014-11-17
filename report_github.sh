@@ -36,5 +36,6 @@ report_github_ci_status () {
     "https://api.github.com/repos/${INSTALLER_REPOSITORY_PATH}/statuses/${branch_sha}"
 }
 
+#TODO
 # Main! If this isn't defined, we'll crash, but that's fine.
-report_github_ci_status ${1}
+#report_github_ci_status ${1}
