@@ -6,7 +6,6 @@ REL_HERE=$(dirname "${BASH_SOURCE}")
 HERE=$(cd "${REL_HERE}"; pwd)  # Get an absolute path
 source "${HERE}/constants.sh"
 
-
 # Notify GitHub that we're getting started here
 "${HERE}/report_github.sh" "pending"
 
@@ -16,6 +15,17 @@ source "${HERE}/constants.sh"
 mkdir -p $WORK_DIR
 cd $WORK_DIR
 echo "Installing in: '$(pwd)'"
+
+# First, install pip
+curl -sfSLO https://bootstrap.pypa.io/get-pip.py
+python get-pip.py
+
+pkg="scalr-manage"
+if [[ -n "$INSTALLER_RELEASE" ]]; then
+  pkg="$pkg==$INSTALLER_RELEASE"
+fi
+echo "Installing $pkg"
+pip install "$pkg"
 
 # Prepare the answers file
 echo -n > $ANSWERS_FILE
@@ -51,30 +61,33 @@ echo "$NOTIFY_SUBSCRIBE" >> $ANSWERS_FILE
 echo "$NOTIFY_EMAIL" >> $ANSWERS_FILE
 
 # Prepare the CLI
+COMMON_OPTS="--configuration=/root/solo.json"
+
 if [[ -n "$SCALR_DEPLOY_ADVANCED" ]] ; then
-  INSTALLER_OPTS="--advanced"
+  CONFIGURE_OPTS="--advanced"
 else
-  INSTALLER_OPTS=""
+  CONFIGURE_OPTS=""
 fi
 
 if [[ -n "${SCALR_COOKBOOK_RELEASE}" ]]; then
   echo "Using Coobkook release: '${SCALR_COOKBOOK_RELEASE}'"
-  INSTALLER_OPTS="${INSTALLER_OPTS} --release=\"${SCALR_COOKBOOK_RELEASE}\""
+  INSTALL_OPTS="--release=\"${SCALR_COOKBOOK_RELEASE}\""
+else
+  INSTALL_OPTS=""
 fi
 
-INSTALLER_OPTS="${INSTALLER_OPTS} --verbose"
+#TODO
+#INSTALLER_OPTS="${INSTALLER_OPTS} --verbose"
 
 
 # Stop Scalarizr update agent if present. Older agents may trigger a conflict on the
 # package manager
 service scalr-upd-client stop || true
 
-# Retrieve installer and launch it
+# Launch installer
+scalr-manage configure $COMMON_OPTS $CONFIGURE_OPTS < $ANSWERS_FILE > $INSTALLER_LOG_FILE
 
-echo "Deploying Scalr from installer branch: $INSTALLER_BRANCH"
-curl -sfSLO "https://raw.githubusercontent.com/Scalr/installer-ng/${INSTALLER_BRANCH}/scripts/install.py"
-
-nohup bash -c "python install.py $INSTALLER_OPTS < $ANSWERS_FILE" > $INSTALLER_LOG_FILE &
+nohup bash -c "scalr-manage install $COMMON_OPTS $INSTALL_OPTS < $ANSWERS_FILE" >> $INSTALLER_LOG_FILE &
 installer_pid=$!
 echo "Started installer with PID: $installer_pid"
 

@@ -7,7 +7,7 @@ export PATH=/usr/local/bin:$PATH
 : ${INSTALLER_LOG_FILE:="/root/install.log"}
 : ${WAITER_LOG_FILE:="/root/waiter.log"}
 
-: ${INSTALLER_BRANCH:="master"}
+: ${INSTALLER_RELEASE:=""}
 
 : ${CI_GITHUB_TOKEN:=""}
 
