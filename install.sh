@@ -20,6 +20,7 @@ echo "Installing in: '$(pwd)'"
 curl -sfSLO https://bootstrap.pypa.io/get-pip.py
 python get-pip.py
 pip install --upgrade setuptools
+pip install --upgrade setuptools  # This isn't mistake, on RHEL 6 we actually need this twice.
 
 pkg="scalr-manage"
 if [[ -n "$INSTALLER_RELEASE" ]]; then
