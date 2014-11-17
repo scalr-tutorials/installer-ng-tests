@@ -85,9 +85,9 @@ fi
 service scalr-upd-client stop || true
 
 # Launch installer
-scalr-manage configure $COMMON_OPTS $CONFIGURE_OPTS < $ANSWERS_FILE > $INSTALLER_LOG_FILE
+scalr-manage $COMMON_OPTS configure $CONFIGURE_OPTS < $ANSWERS_FILE > $INSTALLER_LOG_FILE
 
-nohup bash -c "scalr-manage install $COMMON_OPTS $INSTALL_OPTS < $ANSWERS_FILE" >> $INSTALLER_LOG_FILE &
+nohup bash -c "scalr-manage $COMMON_OPTS install $INSTALL_OPTS < $ANSWERS_FILE" >> $INSTALLER_LOG_FILE &
 installer_pid=$!
 echo "Started installer with PID: $installer_pid"
 
@@ -107,7 +107,7 @@ while kill -0 $installer_pid > /dev/null 2>&1; do
   sleep 10
 done
 
-scalr-manage document $COMMON_OPTS >> $INSTALLER_LOG_FILE
+scalr-manage $COMMON_OPTS document >> $INSTALLER_LOG_FILE
 
 echo "$(date): Install complete" >> $WAITER_LOG_FILE
 
