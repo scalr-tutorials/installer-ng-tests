@@ -19,6 +19,7 @@ echo "Installing in: '$(pwd)'"
 # First, install pip
 curl -sfSLO https://bootstrap.pypa.io/get-pip.py
 python get-pip.py
+pip install --upgrade setuptools
 
 pkg="scalr-manage"
 if [[ -n "$INSTALLER_RELEASE" ]]; then
