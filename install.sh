@@ -107,6 +107,8 @@ while kill -0 $installer_pid > /dev/null 2>&1; do
   sleep 10
 done
 
+scalr-manage document $COMMON_OPTS >> $INSTALLER_LOG_FILE
+
 echo "$(date): Install complete" >> $WAITER_LOG_FILE
 
 szradm --fire-event=$INSTALL_DONE_EVENT
