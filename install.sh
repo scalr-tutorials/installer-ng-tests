@@ -19,6 +19,7 @@ echo "Installing in: '$(pwd)'"
 # We'll need to be able to use sudo, remove requiretty from the sudoers file
 SUDOERS=/etc/sudoers
 TMP_SUDOERS=$(mktemp)
+chmod 0440 "$TMP_SUDOERS"
 grep --invert-match requiretty "$SUDOERS" > "$TMP_SUDOERS"
 mv -f "$TMP_SUDOERS" "$SUDOERS"
 
