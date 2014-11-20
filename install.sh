@@ -16,18 +16,31 @@ mkdir -p $WORK_DIR
 cd $WORK_DIR
 echo "Installing in: '$(pwd)'"
 
-# First, install pip
-curl -sfSLO https://bootstrap.pypa.io/get-pip.py
-python get-pip.py
-pip install --upgrade setuptools
-pip install --upgrade setuptools  # This isn't mistake, on RHEL 6 we actually need this twice.
+# We'll need to be able to use sudo, remove requiretty from the sudoers file
+SUDOERS=/etc/sudoers
+TMP_SUDOERS=$(mktemp)
+grep --invert-match requiretty "$SUDOERS" > "$TMP_SUDOERS"
+mv -f "$TMP_SUDOERS" "$SUDOERS"
 
-pkg="scalr-manage"
-if [[ -n "$INSTALLER_RELEASE" ]]; then
-  pkg="$pkg==$INSTALLER_RELEASE"
+# Check whether we are dealing with a a pre-release (use pip in that case),
+# or an actual release.
+
+if [[ -z "$INSTALLER_RELEASE" ]]; then
+  echo "Deploying from packages"
+  curl https://packagecloud.io/install/repositories/scalr/scalr-manage/script.deb | sudo bash || curl https://packagecloud.io/install/repositories/scalr/scalr-manage/script.rpm | sudo bash
+  $(which apt-get || which yum) install -y scalr-manage
+else
+  echo "Deploying from pip"
+
+  # First, install pip
+  curl -sfSLO https://bootstrap.pypa.io/get-pip.py
+  python get-pip.py
+  pip install --upgrade setuptools
+  pip install --upgrade setuptools  # This isn't mistake, on RHEL 6 we actually need this twice.
+
+  # Then, install the package
+  pip install "scalr-manage==$INSTALLER_RELEASE"
 fi
-echo "Installing $pkg"
-pip install "$pkg"
 
 # Prepare the answers file
 echo -n > $ANSWERS_FILE
