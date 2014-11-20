@@ -68,7 +68,7 @@ else
   echo "y" >> $ANSWERS_FILE
 fi
 
-if [[ -z "$SCALR_DEPLOY_ADVANCED" ]] || [[ "$SCALR_DEPLOY_VERSION" != "5.0" ]] ; then
+if [[ "$SCALR_DEPLOY_VERSION" = "4.5" ]] ; then
   echo "$SCALR_INTERNAL_IP" >> $ANSWERS_FILE
 fi
 
