@@ -42,6 +42,7 @@ command -v jq 2>&1 > /dev/null || install_jq
 pgrep -lf "python install.py" && echo "Install in progress" && exit 0
 
 report_error () {
+  echo "TESTS FAILED!"
   "${HERE}/report_github.sh" "failure"
   $szradm --fire-event=$INSTALL_FAILED_EVENT
   exit 1
@@ -78,8 +79,11 @@ if [ -n $SCALR_START_TESTS ]; then
   $szradm --fire-event=$START_TESTS_EVENT
 fi
 
-echo "Testing poller process"
-service poller status || report_error
+echo "Checking services are running"
+for service in msgsender dbqueue plotter poller szrupdater analytics_poller analytics_processor; do
+  echo "Checking service: $service"
+  service "$service" status || report_error
+done
 
 # Now, run user tests!
 # TODO - Bypass if that key isn't defined
