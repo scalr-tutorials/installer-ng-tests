@@ -36,10 +36,19 @@ else
   # First, install pip
   curl -sfSLO https://bootstrap.pypa.io/get-pip.py
   python get-pip.py
+
+  # Some of our dependencies install as wheel, so they don't have
+  # an egg-info -- they have dist-info instead. See:
+  # https://mail.python.org/pipermail/distutils-sig/2013-March/020073.html
+
+  # Now, this is a problem because it means running scalr-manage might fail due to some
+  # "dependency not found" error. While just not avoiding wheels might be a solution,
+  # we'll instead attempt to get the system into a clean, up-to-date state.
+  # This shouldn't a problem in the actual installer.
+  pip uninstall -y distribute || true
+  pip uninstall -y setuptools || true
   pip install --upgrade setuptools
-  pip install --upgrade setuptools
-  # This isn't a mistake, on RHEL 6 we actually need this twice to
-  # uninstall both distribute and setuptools
+  pip install --upgrade setuptools  # For real
 
   # Then, install the package
   pip install "scalr-manage==$INSTALLER_RELEASE"
