@@ -80,7 +80,7 @@ if [ -n $SCALR_START_TESTS ]; then
 fi
 
 echo "Checking services are running"
-for service in msgsender dbqueue plotter poller szrupdater analytics_poller analytics_processor; do
+for service in rrdcached msgsender dbqueue plotter poller szrupdater analytics_poller analytics_processor; do
   echo "Checking service: $service"
   if [[ -f "/etc/cron.d/$service" ]]; then
     echo "Skipping service defined as a cron job: $service"
