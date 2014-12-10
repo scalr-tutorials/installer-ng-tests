@@ -23,6 +23,10 @@ chmod 0440 "$TMP_SUDOERS"
 grep --invert-match requiretty "$SUDOERS" > "$TMP_SUDOERS"
 mv -f "$TMP_SUDOERS" "$SUDOERS"
 
+# Setup remote logging of exceptions
+
+export SENTRY_DSN=$(curl "https://s3.amazonaws.com/installer.scalr.com/logging/raven-dsn.txt" | tr -d '\n' || true)
+
 # Check whether we are dealing with a a pre-release (use pip in that case),
 # or an actual release.
 
