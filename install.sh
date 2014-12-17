@@ -85,28 +85,24 @@ export CONFIGURATION_FILE
 export CONFIGURE_OPTIONS
 export INSTALL_OPTIONS
 
-# Launch the installer
-nohup bash -c "${WORK_DIR}/${INSTALL_SCRIPT} < ${ANSWERS_FILE}" > "${DIST_LOG_FILE}" &
+# Launch the installer in the background
+{ sh "${WORK_DIR}/${INSTALL_SCRIPT}" & } < "${ANSWERS_FILE}" 2>&1 > "${DIST_LOG_FILE}"
 installer_pid=$!
 echo "Started installer with PID: $installer_pid"
 
 
 # Start a side-process to log running processes to a file
-
-: ${PROC_LOG_FILE:="/root/proc.log"}
-nohup bash -c "while kill -0 $installer_pid > /dev/null 2>&1; do date && ps aux --forest && echo && echo && echo && sleep 2; done" > $PROC_LOG_FILE &
-
+{ sh -c "while kill -0 $installer_pid > /dev/null 2>&1; do date && ps aux --forest && echo && echo && echo && sleep 2; done" & } 2>&1 > "${PROC_LOG_FILE}"
 
 # Wait for the install to exit before we do
+echo > "${WAITER_LOG_FILE}"  # Clean waiter file first
 
-echo > $WAITER_LOG_FILE  # Clean waiter file first
-
-while kill -0 $installer_pid > /dev/null 2>&1; do
-  echo "$(date): Install in progress" >> $WAITER_LOG_FILE
+while kill -0 "$installer_pid" > /dev/null 2>&1; do
+  echo "$(date): Install in progress" | tee $WAITER_LOG_FILE
   sleep 10
 done
 
-echo "$(date): Install complete" >> $WAITER_LOG_FILE
+echo "$(date): Install complete" | tee $WAITER_LOG_FILE
 
 szradm --fire-event=$INSTALL_DONE_EVENT
 

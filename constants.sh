@@ -32,6 +32,7 @@ INSTALL_SCRIPT="$(basename "${INSTALL_SCRIPT_URL}")"
 
 : ${ANSWERS_FILE:="/root/answers"}
 
+: ${PROC_LOG_FILE:="/root/proc.log"}
 : ${DIST_LOG_FILE:="/root/install.log"}
 : ${INSTALLER_LOG_FILE:="/var/log/scalr-install.log"}
 : ${WAITER_LOG_FILE:="/root/waiter.log"}
