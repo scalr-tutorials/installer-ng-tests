@@ -4,10 +4,8 @@ export PATH=/usr/local/bin:$PATH
 
 # Configurable constants
 
-: ${INSTALLER_LOG_FILE:="/root/install.log"}
-: ${WAITER_LOG_FILE:="/root/waiter.log"}
-
-: ${INSTALLER_RELEASE:=""}
+: ${INSTALL_SCRIPT_URL:="https://raw.githubusercontent.com/Scalr/installer-ng/master/dist/install.sh"}
+INSTALL_SCRIPT="$(basename "${INSTALL_SCRIPT_URL}")"
 
 : ${CI_GITHUB_TOKEN:=""}
 
@@ -34,7 +32,9 @@ export PATH=/usr/local/bin:$PATH
 
 : ${ANSWERS_FILE:="/root/answers"}
 
-: ${INSTALLER_LOG_FILE:="/root/install.log"}
+: ${PROC_LOG_FILE:="/root/proc.log"}
+: ${DIST_LOG_FILE:="/root/install.log"}
+: ${INSTALLER_LOG_FILE:="/var/log/scalr-install.log"}
 : ${WAITER_LOG_FILE:="/root/waiter.log"}
 
 : ${INSTALL_DONE_EVENT:="ScalrInstallDone"}
