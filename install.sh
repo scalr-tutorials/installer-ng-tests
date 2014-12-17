@@ -96,11 +96,11 @@ echo "Started installer with PID: $installer_pid"
 
 
 # Start a side-process to log running processes to a file
+echo > "${PROC_LOG_FILE}"  # Clean proc file
 { sh -c "while kill -0 $installer_pid > /dev/null 2>&1; do date && ps aux --forest && echo && echo && echo && sleep 2; done" & } 2>&1 > "${PROC_LOG_FILE}"
 
 # Wait for the install to exit before we do
 echo > "${WAITER_LOG_FILE}"  # Clean waiter file first
-
 while kill -0 "$installer_pid" > /dev/null 2>&1; do
   echo "$(date): Install in progress" | tee $WAITER_LOG_FILE
   sleep 10
