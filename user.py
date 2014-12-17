@@ -1,14 +1,11 @@
 #!/usr/bin/env python
+import sys
 import json
 import datetime
 import base64
 
 from scalr_client import session
 
-
-INSTALLER_CONFIG_PATH = "/root/solo.json"
-
-TEST_PROTOCOl = "http"
 
 TEST_USER_NAME = "Test User"
 TEST_USER_EMAIL = "user@scalr.com"
@@ -21,10 +18,19 @@ def make_test_user_password(n_entropy):
 
 
 if __name__ == "__main__":
-    with open(INSTALLER_CONFIG_PATH) as f:
+    if len(sys.argv) != 2:
+        print "Usage: user.py <config-file>"
+        sys.exit(1)
+
+    config_file = sys.argv[1]
+
+    with open(config_file) as f:
         installer_config = json.load(f)
 
-    base_url = "{0}://{1}".format(TEST_PROTOCOl, installer_config["scalr"]["endpoint"]["host"])
+    base_url = "{0}://{1}".format(
+            installer_config["scalr"]["endpoint"]["scheme"],
+            installer_config["scalr"]["endpoint"]["host"]
+    )
 
     # Find admin creds
     admin = installer_config["scalr"]["admin"]

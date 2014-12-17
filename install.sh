@@ -64,6 +64,8 @@ echo "$NOTIFY_EMAIL" >> $ANSWERS_FILE
 CONFIGURATION_FILE="/root/solo.$$.json"  # We don't want to reuse an existing one (match-version)
 echo "CONFIGURATION_FILE=${CONFIGURATION_FILE}"
 
+echo -n "${CONFIGURATION_FILE}" > "${LAST_CONFIG_FILE_POINTER}"
+
 if [[ -n "$SCALR_DEPLOY_ADVANCED" ]] ; then
   CONFIGURE_OPTIONS="--advanced"
 else

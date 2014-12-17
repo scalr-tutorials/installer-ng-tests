@@ -62,7 +62,8 @@ grep --silent 'Congratulations' "$DIST_LOG_FILE" "$INSTALLER_LOG_FILE" || {
 
 echo "Testing for timezone consistency"
 # Note: this may fail if we test at the second where we change hours... Probably not common enough to care: it's just a test script
-mysql_hour=$(mysql --user=root --password=$(jq --raw-output ".mysql.server_root_password" "/root/solo.json") --skip-column-names --batch --execute="SELECT DATE_FORMAT(NOW(), '%H')")
+LAST_CONFIG_FILE=$(cat "${LAST_CONFIG_FILE_POINTER}")
+mysql_hour=$(mysql --user=root --password=$(jq --raw-output ".mysql.server_root_password" "${LAST_CONFIG_FILE}") --skip-column-names --batch --execute="SELECT DATE_FORMAT(NOW(), '%H')")
 php_hour=$(php -r 'echo date("H") . "\n";')
 
 if [ "$mysql_hour" != "$php_hour" ]; then
@@ -112,7 +113,7 @@ python -c 'import scalr_client' || {
 }
 
 echo "Running Python user tests"
-python user.py || report_error
+python user.py "${LAST_CONFIG_FILE}" || report_error
 
 "${HERE}/report_github.sh" "success"
 exit 0

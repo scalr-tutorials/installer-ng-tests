@@ -43,3 +43,5 @@ INSTALL_SCRIPT="$(basename "${INSTALL_SCRIPT_URL}")"
 
 INSTALLER_REPOSITORY_PATH="scalr/installer-ng"
 INSTALLER_REPOSITORY_URL="git://github.com/${INSTALLER_REPOSITORY_PATH}.git"
+
+LAST_CONFIG_FILE_POINTER="/root/last-config-file"
