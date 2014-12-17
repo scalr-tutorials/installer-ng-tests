@@ -61,7 +61,8 @@ echo "$NOTIFY_SUBSCRIBE" >> $ANSWERS_FILE
 echo "$NOTIFY_EMAIL" >> $ANSWERS_FILE
 
 # Prepare options
-CONFIGURATION_FILE="/root/solo.json"
+CONFIGURATION_FILE="/root/solo.$$.json"  # We don't want to reuse an existing one (match-version)
+echo "CONFIGURATION_FILE=${CONFIGURATION_FILE}"
 
 if [[ -n "$SCALR_DEPLOY_ADVANCED" ]] ; then
   CONFIGURE_OPTIONS="--advanced"
