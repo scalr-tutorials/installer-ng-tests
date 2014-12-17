@@ -86,7 +86,7 @@ export CONFIGURE_OPTIONS
 export INSTALL_OPTIONS
 
 # Launch the installer
-nohup bash -c "${WORK_DIR}/${INSTALL_SCRIPT} < ${ANSWERS_FILE}" > "${INSTALLER_LOG_FILE}" &
+nohup bash -c "${WORK_DIR}/${INSTALL_SCRIPT} < ${ANSWERS_FILE}" > "${DIST_LOG_FILE}" &
 installer_pid=$!
 echo "Started installer with PID: $installer_pid"
 

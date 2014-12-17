@@ -7,9 +7,6 @@ export PATH=/usr/local/bin:$PATH
 : ${INSTALL_SCRIPT_URL:="https://raw.githubusercontent.com/Scalr/installer-ng/master/dist/install.sh"}
 INSTALL_SCRIPT="$(basename "${INSTALL_SCRIPT_URL}")"
 
-: ${INSTALLER_LOG_FILE:="/root/install.log"}
-: ${WAITER_LOG_FILE:="/root/waiter.log"}
-
 : ${CI_GITHUB_TOKEN:=""}
 
 : ${SCALR_SYNC_ID:="scalrqa"}
@@ -35,7 +32,8 @@ INSTALL_SCRIPT="$(basename "${INSTALL_SCRIPT_URL}")"
 
 : ${ANSWERS_FILE:="/root/answers"}
 
-: ${INSTALLER_LOG_FILE:="/root/install.log"}
+: ${DIST_LOG_FILE:="/root/install.log"}
+: ${INSTALLER_LOG_FILE:="/var/log/scalr-install.log"}
 : ${WAITER_LOG_FILE:="/root/waiter.log"}
 
 : ${INSTALL_DONE_EVENT:="ScalrInstallDone"}

@@ -49,13 +49,13 @@ report_error () {
 }
 
 echo "Testing for errors"
-grep -PB$TEST_REPORT_LINES 'ERROR|FATAL' $INSTALLER_LOG_FILE && report_error  # There should be no error in the install log
+grep -PB$TEST_REPORT_LINES 'ERROR|FATAL' "$DIST_LOG_FILE" "$INSTALLER_LOG_FILE" && report_error  # There should be no error in the install log
 
 
 echo "Testing for proper install termination"
-grep --silent 'Congratulations' $INSTALLER_LOG_FILE || {
+grep --silent 'Congratulations' "$DIST_LOG_FILE" "$INSTALLER_LOG_FILE" || {
   # If this wasn't there, there must be something wrong
-  tail -n "$TEST_REPORT_LINES" "$INSTALLER_LOG_FILE"
+  tail -n "$TEST_REPORT_LINES" "$DIST_LOG_FILE" "$INSTALLER_LOG_FILE"
   report_error  # The install should be done
 }
 
