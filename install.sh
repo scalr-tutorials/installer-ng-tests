@@ -87,7 +87,10 @@ export CONFIGURE_OPTIONS
 export INSTALL_OPTIONS
 
 # Launch the installer in the background
-{ sh "${WORK_DIR}/${INSTALL_SCRIPT}" & } < "${ANSWERS_FILE}" 2>&1 > "${DIST_LOG_FILE}"
+# Note: PYTHONUNBUFFERED might seem a it unusual here, but there is a reason.
+# There are several invocations of Python in the install script, and the first one *will* consume
+# the entirety of stdin (even if it does not need it) unless we have this option.
+{ PYTHONUNBUFFERED=1 sh "${WORK_DIR}/${INSTALL_SCRIPT}" & } < "${ANSWERS_FILE}" 2>&1 > "${DIST_LOG_FILE}"
 installer_pid=$!
 echo "Started installer with PID: $installer_pid"
 
