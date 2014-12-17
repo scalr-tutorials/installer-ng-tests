@@ -23,29 +23,9 @@ chmod 0440 "$TMP_SUDOERS"
 grep --invert-match requiretty "$SUDOERS" > "$TMP_SUDOERS"
 mv -f "$TMP_SUDOERS" "$SUDOERS"
 
-# Setup remote logging of exceptions
-
-export SENTRY_DSN=$(curl "https://s3.amazonaws.com/installer.scalr.com/logging/raven-dsn.txt" | tr -d '\n' || true)
-
-# Check whether we are dealing with a a pre-release (use pip in that case),
-# or an actual release.
-
-if [[ -z "$INSTALLER_RELEASE" ]]; then
-  echo "Deploying from packages"
-  curl https://packagecloud.io/install/repositories/scalr/scalr-manage/script.deb | sudo bash || curl https://packagecloud.io/install/repositories/scalr/scalr-manage/script.rpm | sudo bash
-  $(which apt-get || which yum) install -y scalr-manage
-else
-  echo "Deploying from pip"
-
-  # First, install pip
-  curl -sfSLO https://bootstrap.pypa.io/get-pip.py
-  python get-pip.py
-
-  # Old versions of setuptools (like we'll find on CentOS 6) are not able to load
-  # wheels. Upgrading setuptools isn't really a solution either, as it creates a
-  # conflict with system packages.
-  pip install --no-use-wheel "scalr-manage==$INSTALLER_RELEASE"
-fi
+echo "Downloading install script: ${INSTALL_SCRIPT_URL}"
+curl -sfSLO "${INSTALL_SCRIPT_URL}"
+chmod +x -- "${WORK_DIR}/${INSTALL_SCRIPT}"
 
 # Prepare the answers file
 echo -n > $ANSWERS_FILE
@@ -80,34 +60,33 @@ echo "${SCALR_CONNECTION_POLICY}" >> $ANSWERS_FILE
 echo "$NOTIFY_SUBSCRIBE" >> $ANSWERS_FILE
 echo "$NOTIFY_EMAIL" >> $ANSWERS_FILE
 
-# Prepare the CLI
-COMMON_OPTS="--configuration=/root/solo.json"
+# Prepare options
+CONFIGURATION_FILE="/root/solo.json"
 
 if [[ -n "$SCALR_DEPLOY_ADVANCED" ]] ; then
-  CONFIGURE_OPTS="--advanced"
+  CONFIGURE_OPTIONS="--advanced"
 else
-  CONFIGURE_OPTS=""
+  CONFIGURE_OPTIONS=""
 fi
 
 if [[ -n "${SCALR_COOKBOOK_RELEASE}" ]]; then
   echo "Using Coobkook release: '${SCALR_COOKBOOK_RELEASE}'"
-  INSTALL_OPTS="--release=\"${SCALR_COOKBOOK_RELEASE}\""
+  INSTALL_OPTIONS="--release=\"${SCALR_COOKBOOK_RELEASE}\""
 else
-  INSTALL_OPTS=""
+  INSTALL_OPTIONS=""
 fi
-
-#TODO
-#INSTALLER_OPTS="${INSTALLER_OPTS} --verbose"
-
 
 # Stop Scalarizr update agent if present. Older agents may trigger a conflict on the
 # package manager
 service scalr-upd-client stop || true
 
-# Launch installer
-scalr-manage $COMMON_OPTS configure $CONFIGURE_OPTS < $ANSWERS_FILE > $INSTALLER_LOG_FILE
+# Export options for the install script
+export CONFIGURATION_FILE
+export CONFIGURE_OPTIONS
+export INSTALL_OPTIONS
 
-nohup bash -c "scalr-manage $COMMON_OPTS install $INSTALL_OPTS < $ANSWERS_FILE" >> $INSTALLER_LOG_FILE &
+# Launch the installer
+nohup bash -c "${WORK_DIR}/${INSTALL_SCRIPT} < ${ANSWERS_FILE}" > "${INSTALLER_LOG_FILE}" &
 installer_pid=$!
 echo "Started installer with PID: $installer_pid"
 
@@ -126,8 +105,6 @@ while kill -0 $installer_pid > /dev/null 2>&1; do
   echo "$(date): Install in progress" >> $WAITER_LOG_FILE
   sleep 10
 done
-
-scalr-manage $COMMON_OPTS document >> $INSTALLER_LOG_FILE
 
 echo "$(date): Install complete" >> $WAITER_LOG_FILE
 
