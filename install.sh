@@ -16,12 +16,24 @@ mkdir -p $WORK_DIR
 cd $WORK_DIR
 echo "Installing in: '$(pwd)'"
 
-# We'll need to be able to use sudo, remove requiretty from the sudoers file
+
+# We'll need to be able to use sudo, but we don't have a tty
+# Remove requiretty from the sudoers file.
 SUDOERS=/etc/sudoers
 TMP_SUDOERS=$(mktemp)
 chmod 0440 "$TMP_SUDOERS"
 grep --invert-match requiretty "$SUDOERS" > "$TMP_SUDOERS"
 mv -f "$TMP_SUDOERS" "$SUDOERS"
+
+
+# We're not here to test potential repository issues, fix those beforehand
+
+if which yum; then
+  # Remove Scalr repos
+  yum install -y yum-utils
+  yum-config-manager --disable scalr-latest scalr-stable scalr-testing
+fi
+
 
 echo "Downloading install script: ${INSTALL_SCRIPT_URL}"
 curl -sfSLO "${INSTALL_SCRIPT_URL}"
@@ -114,3 +126,9 @@ szradm --fire-event=$INSTALL_DONE_EVENT
 
 # Restart the update agent, if it is there
 service scalr-upd-client start || true
+
+# Re-enable the repos
+
+if which yum; then
+  yum-config-manager --enable scalr-latest scalr-stable scalr-testing
+fi
