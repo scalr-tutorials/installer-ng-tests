@@ -115,5 +115,8 @@ python -c 'import scalr_client' || {
 echo "Running Python user tests"
 python user.py "${LAST_CONFIG_FILE}" || report_error
 
+echo "Runnning install again to check for idempotency"
+scalr-manage -c "${LAST_CONFIG_FILE}" install || report_error
+
 "${HERE}/report_github.sh" "success"
 exit 0
